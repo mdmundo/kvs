@@ -19,6 +19,7 @@ fn main() {
 
 struct Database {
     map: HashMap<String, String>,
+    flush: bool,
 }
 
 impl Database {
@@ -34,7 +35,7 @@ impl Database {
             // to_owned: Creates owned data from borrowed data, usually by cloning.
             // to_string: Converts the given value to a String.
         }
-        Ok(Database { map })
+        Ok(Database { map, flush: false })
     }
     fn insert(&mut self, key: String, value: String) {
         // Try on this order and use the one that works:
@@ -43,15 +44,29 @@ impl Database {
         // self: ownership
         self.map.insert(key, value);
     }
-    fn flush(self) -> std::io::Result<()> {
+    fn flush(mut self) -> std::io::Result<()> {
         // This function takes ownership of database so database cannot be used anymore.
-        let mut contents = String::new();
-        for (key, value) in &self.map {
-            contents.push_str(key);
-            contents.push('\t');
-            contents.push_str(value);
-            contents.push('\n');
-        }
-        std::fs::write("kv.db", contents)
+        self.flush = true;
+        do_flush(&self)
     }
+}
+
+impl Drop for Database {
+    fn drop(&mut self) {
+        if !self.flush {
+            let _ = do_flush(self);
+        }
+    }
+}
+
+fn do_flush(database: &Database) -> std::io::Result<()> {
+    let mut contents = String::new();
+    for (key, value) in &database.map {
+        contents.push_str(key);
+        contents.push('\t');
+        contents.push_str(value);
+        contents.push('\n');
+        contents.push('\n');
+    }
+    std::fs::write("kv.db", contents)
 }
