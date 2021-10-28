@@ -49,8 +49,10 @@ impl Database {
         // This function takes ownership of database so database cannot be used anymore.
         let mut contents = String::new();
         for (key, value) in &self.map {
-            let formatted = format!("{}\t{}\n", key, value);
-            contents.push_str(&formatted);
+            contents.push_str(&key);
+            contents.push('\t');
+            contents.push_str(&value);
+            contents.push('\n');
         }
         std::fs::write("kv.db", contents)
     }
