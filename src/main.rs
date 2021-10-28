@@ -14,6 +14,7 @@ fn main() {
     // to_uppercase: Returns a new String, so I'm able to use `key` it again.
     // clone: Returns a copy of the value.
     database.insert(key, value);
+    database.flush().unwrap();
 }
 
 struct Database {
@@ -43,5 +44,13 @@ impl Database {
         // &mut self: mutable borrow
         // self: ownership
         self.map.insert(key, value);
+    }
+    fn flush(self) -> std::io::Result<()> {
+        let mut contents = String::new();
+        for (key, value) in &self.map {
+            let formatted = format!("{}\t{}\n", key, value);
+            contents.push_str(&formatted);
+        }
+        std::fs::write("kv.db", contents)
     }
 }
