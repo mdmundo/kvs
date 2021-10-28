@@ -9,7 +9,8 @@ fn main() {
     println!("The key is '{}' and the value is '{}'", key, value);
     let contents = format!("{}\t{}\n", key, value);
     let write_result = std::fs::write("kv.db", contents).unwrap();
-    let database = Database::new().expect("Failed to create database");
+    let mut database = Database::new().expect("Failed to create database");
+    database.insert(key.to_uppercase(), value.clone());
 }
 
 struct Database {
@@ -32,5 +33,12 @@ impl Database {
         Ok(Database {
             map: HashMap::new(),
         })
+    }
+    fn insert(&mut self, key: String, value: String) {
+        // Try on this order and use the one that works:
+        // &self: immutable borrow
+        // &mut self: mutable borrow
+        // self: ownership
+        self.map.insert(key, value);
     }
 }
