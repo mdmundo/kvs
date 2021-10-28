@@ -46,6 +46,7 @@ impl Database {
         self.map.insert(key, value);
     }
     fn flush(self) -> std::io::Result<()> {
+        // This function takes ownership of database so database cannot be used anymore.
         let mut contents = String::new();
         for (key, value) in &self.map {
             let formatted = format!("{}\t{}\n", key, value);
