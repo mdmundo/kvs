@@ -34,9 +34,7 @@ impl Database {
             // to_owned: Creates owned data from borrowed data, usually by cloning.
             // to_string: Converts the given value to a String.
         }
-        Ok(Database {
-            map: HashMap::new(),
-        })
+        Ok(Database { map })
     }
     fn insert(&mut self, key: String, value: String) {
         // Try on this order and use the one that works:
