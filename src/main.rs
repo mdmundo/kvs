@@ -1,3 +1,5 @@
+use std::collections::HashMap;
+
 fn main() {
     let mut args = std::env::args().skip(1);
     let key = args.next().expect("Key required");
@@ -11,12 +13,12 @@ fn main() {
 }
 
 struct Database {
-    map: std::collections::HashMap<String, String>,
+    map: HashMap<String, String>,
 }
 
 impl Database {
     fn new() -> Result<Database, std::io::Error> {
-        let mut map: std::collections::HashMap<String, String> = std::collections::HashMap::new();
+        let mut map: HashMap<String, String> = HashMap::new();
         let contents = std::fs::read_to_string("kv.db")?;
         // the `?` operator can only be used in a function that returns `Result` or `Option`
         for line in contents.lines() {
@@ -28,7 +30,7 @@ impl Database {
             // to_string: Converts the given value to a String.
         }
         Ok(Database {
-            map: std::collections::HashMap::new(),
+            map: HashMap::new(),
         })
     }
 }
