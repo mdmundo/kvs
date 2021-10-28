@@ -1,5 +1,4 @@
 fn main() {
-    println!("Hello, world!");
     let mut args = std::env::args().skip(1);
     let key = args.next().expect("Key required");
     // expect: Panics if the value is a [None] with a custom panic message provided by msg.
