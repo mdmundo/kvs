@@ -1,69 +1,17 @@
-use std::collections::HashMap;
+mod db;
 
 fn main() {
     let mut args = std::env::args().skip(1);
+    // let action = args.next().expect("Action required");
+    // add, rm, get
     let key = args.next().expect("Key required");
     // expect: Panics if the value is a [None] with a custom panic message provided by msg.
     let value = args.next().unwrap();
     // unwrap: Panics if the self value equals [None].
-    println!("The key is '{}' and the value is '{}'", key, value);
-    let mut database = Database::new().expect("Failed to create database");
+    // println!("The key is '{}' and the value is '{}'", key, value);
+    let mut database = db::Database::new().expect("Failed to create database");
     database.insert(key.to_uppercase(), value.clone());
     // to_uppercase: Returns a new String, so I'm able to use `key` it again.
     // clone: Returns a copy of the value.
-    database.insert(key, value);
     database.flush().unwrap();
-}
-
-struct Database {
-    map: HashMap<String, String>,
-    flush: bool,
-}
-
-impl Database {
-    fn new() -> Result<Database, std::io::Error> {
-        let mut map: HashMap<String, String> = HashMap::new();
-        let contents = std::fs::read_to_string("kv.db").unwrap_or(String::from(""));
-        // the `?` operator can only be used in a function that returns `Result` or `Option`
-        for line in contents.lines() {
-            let mut chunks = line.splitn(2, '\t');
-            let key = chunks.next().expect("No key");
-            let value = chunks.next().expect("No value");
-            map.insert(key.to_owned(), value.to_string());
-            // to_owned: Creates owned data from borrowed data, usually by cloning.
-            // to_string: Converts the given value to a String.
-        }
-        Ok(Database { map, flush: false })
-    }
-    fn insert(&mut self, key: String, value: String) {
-        // Try on this order and use the one that works:
-        // &self: immutable borrow
-        // &mut self: mutable borrow
-        // self: ownership
-        self.map.insert(key, value);
-    }
-    fn flush(mut self) -> std::io::Result<()> {
-        // This function takes ownership of database so database cannot be used anymore.
-        self.flush = true;
-        do_flush(&self)
-    }
-}
-
-impl Drop for Database {
-    fn drop(&mut self) {
-        if !self.flush {
-            let _ = do_flush(self);
-        }
-    }
-}
-
-fn do_flush(database: &Database) -> std::io::Result<()> {
-    let mut contents = String::new();
-    for (key, value) in &database.map {
-        contents.push_str(key);
-        contents.push('\t');
-        contents.push_str(value);
-        contents.push('\n');
-    }
-    std::fs::write("kv.db", contents)
 }
