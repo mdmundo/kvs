@@ -7,8 +7,6 @@ fn main() {
     let value = args.next().unwrap();
     // unwrap: Panics if the self value equals [None].
     println!("The key is '{}' and the value is '{}'", key, value);
-    // let contents = format!("{}\t{}\n", key, value);
-    // let write_result = std::fs::write("kv.db", contents).unwrap();
     let mut database = Database::new().expect("Failed to create database");
     database.insert(key.to_uppercase(), value.clone());
     // to_uppercase: Returns a new String, so I'm able to use `key` it again.
