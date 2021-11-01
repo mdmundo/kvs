@@ -64,7 +64,6 @@ fn do_flush(database: &Database) -> std::io::Result<()> {
         contents.push('\t');
         contents.push_str(value);
         contents.push('\n');
-        contents.push('\n');
     }
     std::fs::write("kv.db", contents)
 }
