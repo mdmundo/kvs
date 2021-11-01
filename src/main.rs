@@ -23,17 +23,15 @@ struct Database {
 impl Database {
     fn new() -> Result<Database, std::io::Error> {
         let mut map: HashMap<String, String> = HashMap::new();
-        let contents = std::fs::read_to_string("kv.db");
+        let contents = std::fs::read_to_string("kv.db").unwrap_or(String::from(""));
         // the `?` operator can only be used in a function that returns `Result` or `Option`
-        if contents.is_ok() {
-            for line in contents.unwrap().lines() {
-                let mut chunks = line.splitn(2, '\t');
-                let key = chunks.next().expect("No key");
-                let value = chunks.next().expect("No value");
-                map.insert(key.to_owned(), value.to_string());
-                // to_owned: Creates owned data from borrowed data, usually by cloning.
-                // to_string: Converts the given value to a String.
-            }
+        for line in contents.lines() {
+            let mut chunks = line.splitn(2, '\t');
+            let key = chunks.next().expect("No key");
+            let value = chunks.next().expect("No value");
+            map.insert(key.to_owned(), value.to_string());
+            // to_owned: Creates owned data from borrowed data, usually by cloning.
+            // to_string: Converts the given value to a String.
         }
         Ok(Database { map, flush: false })
     }
