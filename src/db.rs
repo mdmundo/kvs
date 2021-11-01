@@ -36,6 +36,13 @@ impl Database {
         let value = self.map.get(key);
         value.expect("Value not found")
     }
+    pub fn remove(&mut self, key: &str) {
+        // Try on this order and use the one that works:
+        // &self: immutable borrow
+        // &mut self: mutable borrow
+        // self: ownership
+        self.map.remove(key);
+    }
     pub fn flush(mut self) -> std::io::Result<()> {
         // This function takes ownership of database so database cannot be used anymore.
         self.flush = true;
