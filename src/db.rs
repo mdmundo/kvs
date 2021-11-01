@@ -43,6 +43,16 @@ impl Database {
         // self: ownership
         self.map.remove(key);
     }
+    pub fn keys(
+        &self,
+    ) -> std::collections::hash_map::Keys<std::string::String, std::string::String> {
+        // Try on this order and use the one that works:
+        // &self: immutable borrow
+        // &mut self: mutable borrow
+        // self: ownership
+        let keys = self.map.keys();
+        keys
+    }
     pub fn flush(mut self) -> std::io::Result<()> {
         // This function takes ownership of database so database cannot be used anymore.
         self.flush = true;

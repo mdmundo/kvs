@@ -18,10 +18,19 @@ fn main() {
         let database = db::Database::new().expect("Failed to create database");
         let value = database.get(&key.to_uppercase());
         println!("Value: {}", value);
+        // Do not have to call [database.flush().unwrap()] because Drop implementation
     } else if action.eq("rm") {
         let key = args.next().expect("Key required");
         let mut database = db::Database::new().expect("Failed to create database");
         database.remove(&key.to_uppercase());
+        // Do not have to call [database.flush().unwrap()] because Drop implementation
+    } else if action.eq("list") {
+        let database = db::Database::new().expect("Failed to create database");
+        let keys = database.keys();
+        println!("List of Keys:");
+        for key in keys {
+            println!("{}", key);
+        }
         // Do not have to call [database.flush().unwrap()] because Drop implementation
     }
 }
